@@ -1,0 +1,161 @@
+{
+  "meta": {
+    "siteName": "Capybara Quiz",
+    "tagline": "Float through a story. Discover your inner capybara.",
+    "ogTitle": "What capybara are you?",
+    "ogDescription": "A non-linear personality quiz with a capybara mascot. Drift through 5 cozy questions and meet your inner capy."
+  },
+  "ui": {
+    "start": "Start the quiz",
+    "next": "Next",
+    "back": "Back",
+    "restart": "Take it again",
+    "share": "Share",
+    "copy": "Copy link",
+    "copied": "Copied!",
+    "imageReady": "Image saved — open the app and add it to your story.",
+    "storyCta": "What capybara are you?",
+    "language": "Language",
+    "darkMode": "Dark mode",
+    "progress": "Question {current} of {total}",
+    "yourArchetype": "You are",
+    "traits": "Traits",
+    "vibeCheck": "Vibe breakdown",
+    "tryAnother": "Try another path",
+    "footer": "Made with warm water and patience.",
+    "loading": "Floating in...",
+    "shareText": "I'm a {archetype}! What capybara are you?",
+    "questionLabel": "Question",
+    "of": "of",
+    "switchToTH": "ภาษาไทย",
+    "switchToEN": "English",
+    "history": "History",
+    "historyTitle": "Your past capybaras",
+    "historyEmpty": "No results yet. Take the quiz to see your inner capybara.",
+    "historyClear": "Clear history",
+    "historyClearConfirm": "Clear all saved results?",
+    "viewResult": "View result",
+    "takenOn": "Taken {date}",
+    "viewHistory": "View history",
+    "playthroughs": "{count} past playthroughs"
+  },
+  "questions": {
+    "q_intro": {
+      "prompt": "It's a slow afternoon. The water is just right. What pulls you in?",
+      "choice": {
+        "a": "A long, quiet soak — nothing on the schedule.",
+        "b": "Wandering somewhere new — let's see what's out there.",
+        "c": "Friends are gathering — the more, the warmer.",
+        "d": "I'll come alive after the sun goes down."
+      }
+    },
+    "q_morning": {
+      "prompt": "How does your perfect morning unfold?",
+      "choice": {
+        "a": "Slowly. Hot bath, deep breaths, no thoughts.",
+        "b": "With a bowl of fruit and good crunchy snacks.",
+        "c": "A gentle stretch in the sun, no rush."
+      }
+    },
+    "q_adventure": {
+      "prompt": "Where do your paws want to wander?",
+      "choice": {
+        "a": "Deep into a misty forest, alone with the trees.",
+        "b": "Down a fast river — bring the splash.",
+        "c": "A long mountain trail with one cozy lookout."
+      }
+    },
+    "q_social": {
+      "prompt": "The gathering is on. What's your role?",
+      "choice": {
+        "a": "Host the whole thing — snacks, music, hugs.",
+        "b": "Quiet corner storyteller, drawing people in.",
+        "c": "Honestly? I'd rather slip away to the water."
+      }
+    },
+    "q_night": {
+      "prompt": "Past midnight. The world is asleep. What now?",
+      "choice": {
+        "a": "Stargazing alone, just me and the sky.",
+        "b": "A late, secret snack mission.",
+        "c": "Cozy movie marathon under a blanket pile."
+      }
+    },
+    "q_water": {
+      "prompt": "Pick your water spot.",
+      "choice": {
+        "a": "Steaming hot spring, eyes closed, mind drifting.",
+        "b": "A lazy river — nowhere to be, all day.",
+        "c": "A splash zone — friends, laughter, chaos."
+      }
+    },
+    "q_companion": {
+      "prompt": "Who's around you tonight?",
+      "choice": {
+        "a": "A small, trusted circle — the same warm faces.",
+        "b": "Everyone. The more capys, the better.",
+        "c": "Just me, thanks. Solitude is the snack."
+      }
+    },
+    "q_food": {
+      "prompt": "Snack situation. Choose carefully.",
+      "choice": {
+        "a": "Fresh fruit, herbs, a sprig of something green.",
+        "b": "A warm, hearty bowl of comfort.",
+        "c": "A midnight cheese plate, lit by candle.",
+        "d": "Skip food — more napping, please."
+      }
+    },
+    "q_final": {
+      "prompt": "One last decision before the day closes.",
+      "choice": {
+        "a": "Drift to sleep watching the stars.",
+        "b": "One more shared laugh with friends.",
+        "c": "A final reflective soak — alone with thoughts.",
+        "d": "One more daring dive before bed."
+      }
+    }
+  },
+  "archetypes": {
+    "zen-master": {
+      "name": "The Zen Master",
+      "description": "You are stillness on four paws. Storms pass; you keep floating. People drift toward your calm.",
+      "traits": ["Calm under pressure", "Quietly wise", "Patient by default"]
+    },
+    "foodie-lounger": {
+      "name": "The Foodie Lounger",
+      "description": "Life is a series of cozy snacks between excellent naps. You taste the world slowly and on purpose.",
+      "traits": ["Comfort first", "Connoisseur of small joys", "Always knows the best snack"]
+    },
+    "adventure-seeker": {
+      "name": "The Adventure Seeker",
+      "description": "There's a trail, and you've already started walking. Restless, curious, the first one in the river.",
+      "traits": ["Bold and curious", "First to explore", "Loves a good story"]
+    },
+    "social-bather": {
+      "name": "The Social Bather",
+      "description": "The party is wherever you are. You collect friends like warm stones — easy, generous, glowing.",
+      "traits": ["Warm host energy", "Connector of people", "Group hot tub mayor"]
+    },
+    "lone-floater": {
+      "name": "The Lone Floater",
+      "description": "Solitude is a feature, not a bug. You think best in still water and rarely need an audience.",
+      "traits": ["Independent", "Deep thinker", "Recharges in silence"]
+    },
+    "hot-spring-sage": {
+      "name": "The Hot Spring Sage",
+      "description": "Warm water, warmer wisdom. People come to you with tangled thoughts and leave with something clearer.",
+      "traits": ["Quietly wise", "Soothing presence", "Trusted listener"]
+    },
+    "sunbather": {
+      "name": "The Sunbather",
+      "description": "Optimism wrapped in a soft, warm pelt. You find the bright patch and you stay there.",
+      "traits": ["Sunny outlook", "Easygoing", "Brightens the room"]
+    },
+    "night-owl": {
+      "name": "The Night Owl Capy",
+      "description": "Your best ideas show up after midnight. You make the small hours feel like a private kingdom.",
+      "traits": ["Creative after dark", "Mysterious vibes", "Loves quiet hours"]
+    }
+  }
+}
