@@ -22,7 +22,7 @@ const fontMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Capybara Quiz — What capybara are you?",
+    default: "Capybara Quiz — What Capybara Are You? Cozy Personality Test",
     template: "%s · Capybara Quiz",
   },
   description:
@@ -42,14 +42,9 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Capybara Quiz",
-    images: ["/og.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Capybara Quiz — What capybara are you?",
-    description:
-      "Drift through 5 cozy questions and meet your inner capy.",
-    images: ["/og.png"],
   },
   icons: {
     icon: [{ url: "/favicon.ico" }],

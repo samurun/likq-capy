@@ -36,13 +36,11 @@ export async function generateMetadata({
       url,
       type: "website",
       locale: OG_LOCALE[locale],
-      images: ["/og.png"],
     },
     twitter: {
       card: "summary_large_image",
       title: dict.meta.ogTitle,
       description: dict.meta.ogDescription,
-      images: ["/og.png"],
     },
   };
 }

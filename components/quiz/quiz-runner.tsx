@@ -62,6 +62,9 @@ export function QuizRunner({
 
   // Fallback: if we ever land here in terminal state (e.g. unexpected
   // rehydrate), recover by computing the archetype and navigating.
+  // Don't reset the store here — the result page will do that on mount.
+  // Resetting now would flip currentNodeId back to START before the route
+  // transition completes and cause a Q1 flash.
   useEffect(() => {
     if (!isTerminal) return;
     const snapshot = useQuizStore.getState();
@@ -69,9 +72,7 @@ export function QuizRunner({
     addResult({ archetype, locale, path: snapshot.history });
     useQuizStore.persist.clearStorage();
     router.replace(`/${locale}/result/${archetype}`);
-    // Defer reset so we don't flash Q1 before the route transition.
-    queueMicrotask(reset);
-  }, [isTerminal, locale, reset, router]);
+  }, [isTerminal, locale, router]);
 
   if (isTerminal) {
     return <PreparingState label={dict.ui.loading} />;
@@ -85,9 +86,11 @@ export function QuizRunner({
 
   const handleChoose = (choice: Choice) => {
     // For the terminal choice, short-circuit: compute the archetype, persist
-    // the run and navigate without first transitioning into the TERMINAL
-    // state. This avoids an unstyled "loading" frame and a Q1 flash from the
-    // reset that would otherwise happen mid-navigation.
+    // the run and navigate without ever transitioning the store into the
+    // TERMINAL state. We deliberately do not call reset() here — that would
+    // flip currentNodeId to START synchronously and cause a Q1 flash before
+    // the route transition completes. The result page resets the store on
+    // mount, so the next /quiz visit still starts fresh.
     if (choice.next === null) {
       const snapshot = useQuizStore.getState();
       const finalHistory = [
@@ -103,7 +106,6 @@ export function QuizRunner({
       addResult({ archetype, locale, path: finalHistory });
       useQuizStore.persist.clearStorage();
       router.replace(`/${locale}/result/${archetype}`);
-      queueMicrotask(reset);
       return;
     }
     choose(choice);

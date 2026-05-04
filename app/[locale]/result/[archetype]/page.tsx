@@ -44,13 +44,11 @@ export async function generateMetadata({
       url,
       type: "article",
       locale: OG_LOCALE[locale],
-      images: ["/og.png"],
     },
     twitter: {
       card: "summary_large_image",
       title: `${meta.name} · ${dict.meta.siteName}`,
       description,
-      images: ["/og.png"],
     },
   };
 }

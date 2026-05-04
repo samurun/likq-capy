@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import Link from "next/link"
 import { motion } from "motion/react"
 
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { ShareButtons } from "@/components/quiz/share-buttons"
 import { ARCHETYPES } from "@/lib/quiz/archetypes"
 import { ACCENT_BG, ACCENT_TEXT } from "@/lib/quiz/accent"
+import { useQuizStore } from "@/lib/quiz/store"
 import type { ArchetypeId, Locale } from "@/lib/quiz/types"
 import type { Dictionary } from "@/lib/i18n/dictionaries"
 import { format } from "@/lib/i18n/lookup"
@@ -74,6 +76,13 @@ export function ResultCard({
 }) {
   const archetype = ARCHETYPES[archetypeId]
   const meta = dict.archetypes[archetypeId]
+
+  // Reset the quiz store on mount so that returning to /quiz starts fresh.
+  // Done here (not in QuizRunner on terminal choice) to avoid a Q1 flash
+  // during the route transition out of the runner.
+  useEffect(() => {
+    useQuizStore.getState().reset()
+  }, [])
 
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-8 px-5 py-10 sm:py-16">
