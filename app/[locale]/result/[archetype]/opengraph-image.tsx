@@ -47,7 +47,7 @@ export default async function ResultOgImage({
   params: Promise<{ locale: string; archetype: string }>
 }) {
   const { locale: rawLocale, archetype: rawArchetype } = await params
-  const locale = isLocale(rawLocale) ? rawLocale : "en"
+  const locale = isLocale(rawLocale) ? rawLocale : "th"
   if (!isArchetypeId(rawArchetype)) {
     return new Response("Not found", { status: 404 })
   }

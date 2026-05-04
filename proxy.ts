@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { LOCALES, type Locale } from "@/lib/quiz/types";
 
 const LOCALE_SET = new Set<string>(LOCALES);
-const DEFAULT_LOCALE: Locale = "en";
+const DEFAULT_LOCALE: Locale = "th";
 const LOCALE_HEADER = "x-locale";
 const PATHNAME_HEADER = "x-pathname";
 

@@ -23,7 +23,7 @@ export default async function HomeOgImage({
   params: Promise<{ locale: string }>
 }) {
   const { locale: rawLocale } = await params
-  const locale = isLocale(rawLocale) ? rawLocale : "en"
+  const locale = isLocale(rawLocale) ? rawLocale : "th"
   const dict = getDictionary(locale)
   const fontData = await loadDisplayFont()
   const cta = CTA_BY_LOCALE[locale] ?? CTA_BY_LOCALE.en

@@ -74,7 +74,7 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const h = await headers()
   const headerLocale = h.get("x-locale")
-  const lang: Locale = isLocale(headerLocale) ? headerLocale : "en"
+  const lang: Locale = isLocale(headerLocale) ? headerLocale : "th"
 
   return (
     <html
