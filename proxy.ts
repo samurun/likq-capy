@@ -6,16 +6,6 @@ const DEFAULT_LOCALE: Locale = "th";
 const LOCALE_HEADER = "x-locale";
 const PATHNAME_HEADER = "x-pathname";
 
-function detectLocale(req: NextRequest): Locale {
-  const accept = req.headers.get("accept-language") ?? "";
-  for (const part of accept.split(",")) {
-    const tag = part.trim().split(";")[0].toLowerCase();
-    const base = tag.split("-")[0];
-    if (LOCALE_SET.has(base)) return base as Locale;
-  }
-  return DEFAULT_LOCALE;
-}
-
 function localeFromPath(pathname: string): Locale | null {
   const seg = pathname.split("/")[1];
   return seg && LOCALE_SET.has(seg) ? (seg as Locale) : null;
@@ -32,9 +22,11 @@ export function proxy(req: NextRequest) {
     return NextResponse.next({ request: { headers } });
   }
 
+  // Always redirect to the default locale. We deliberately do not detect
+  // the browser's Accept-Language — the audience is primarily Thai, and
+  // users who want English can switch via the locale switcher or visit /en.
   const url = req.nextUrl.clone();
-  const locale = detectLocale(req);
-  url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
+  url.pathname = `/${DEFAULT_LOCALE}${pathname === "/" ? "" : pathname}`;
   return NextResponse.redirect(url);
 }
 
