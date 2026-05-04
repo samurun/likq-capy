@@ -5,12 +5,13 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 import { NODES, START } from "./graph";
 import { applyChoice, emptyTotals } from "./score";
-import type { Choice, HistoryEntry, QuizState, Tag } from "./types";
+import type { HistoryEntry, QuizState, Tag } from "./types";
+import type { ThemeChoice } from "@/lib/themes/types";
 
 const TERMINAL = "__terminal__";
 
 type Actions = {
-  choose: (choice: Choice) => void;
+  choose: (choice: ThemeChoice) => void;
   back: () => void;
   reset: () => void;
 };

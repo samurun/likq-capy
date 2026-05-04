@@ -9,6 +9,8 @@ import { ARCHETYPES } from "@/lib/quiz/archetypes";
 import { ACCENT_BG, ACCENT_TEXT } from "@/lib/quiz/accent";
 import { clearResults, deleteResult, useResults } from "@/lib/quiz/history";
 import type { Locale } from "@/lib/quiz/types";
+import { activeTheme } from "@/lib/themes/active";
+import { tt } from "@/lib/themes/i18n";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { format } from "@/lib/i18n/lookup";
 import { cn } from "@/lib/utils";
@@ -88,7 +90,7 @@ export function HistoryList({
       <AnimatePresence initial={false}>
         {records.map((record, index) => {
           const archetype = ARCHETYPES[record.archetype];
-          const meta = dict.archetypes[record.archetype];
+          const name = tt(activeTheme.archetypes[record.archetype].name, locale);
           return (
             <motion.div
               key={record.id}
@@ -120,7 +122,7 @@ export function HistoryList({
                 <div className="size-14 shrink-0">
                   <ArchetypeIllustration
                     id={record.archetype}
-                    title={meta.name}
+                    title={name}
                   />
                 </div>
                 <div className="flex min-w-0 grow flex-col gap-0.5">
@@ -130,7 +132,7 @@ export function HistoryList({
                       ACCENT_TEXT[archetype.accent],
                     )}
                   >
-                    {meta.name}
+                    {name}
                   </span>
                   <span className="font-mono text-[0.7rem] text-muted-foreground">
                     {format(dict.ui.takenOn, {

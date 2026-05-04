@@ -2,6 +2,10 @@ import { ARCHETYPES } from "./archetypes";
 import type { ArchetypeId } from "./types";
 import type { Accessory } from "@/components/mascots/capy";
 
+// NOTE: this story-image renderer hardcodes the Capy mascot (canvas-rendered
+// from inline SVG paths). To add a second mascot, build a parallel renderer
+// keyed by activeTheme.mascotId and dispatch here.
+
 const ACCENT_COLORS: Record<string, [string, string]> = {
   "chart-1": ["#f7d985", "#dd9a3c"],
   "chart-2": ["#8fd09a", "#3b8a4d"],
@@ -76,9 +80,13 @@ export async function generateStoryImage(
   const mascotY = cardY + 40;
 
   const archetype = ARCHETYPES[input.archetypeId];
-  const eyes = EYES_BY_ARCHETYPE[input.archetypeId] ?? "open";
+  const accessory = (archetype.mascot.variant ?? "none") as Accessory;
+  const eyes = (archetype.mascot.expression ?? "open") as
+    | "open"
+    | "closed"
+    | "happy";
   const svg = renderCapySvg({
-    accessory: archetype.accessory,
+    accessory,
     eyes,
     colors: themeColors,
   });
@@ -136,17 +144,6 @@ export async function generateStoryImage(
     canvas.toBlob(resolve, "image/png", 0.95),
   );
 }
-
-const EYES_BY_ARCHETYPE: Record<ArchetypeId, "open" | "closed" | "happy"> = {
-  "zen-master": "closed",
-  "foodie-lounger": "happy",
-  "adventure-seeker": "open",
-  "social-bather": "happy",
-  "lone-floater": "closed",
-  "hot-spring-sage": "closed",
-  sunbather: "happy",
-  "night-owl": "open",
-};
 
 type ThemeColors = {
   capy: string;

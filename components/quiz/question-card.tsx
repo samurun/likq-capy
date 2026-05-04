@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 
 import { ChoiceButton } from "./choice-button";
 import { Capy } from "@/components/mascots/capy";
-import type { Choice, QuestionNode } from "@/lib/quiz/types";
+import type { ThemeChoice, ThemeQuestion } from "@/lib/themes/types";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const cardInitial = { opacity: 0, y: 12 };
@@ -19,22 +19,24 @@ const mascotTransition = {
 };
 
 export function QuestionCard({
+  nodeId,
   node,
   prompt,
   labelFor,
   onChoose,
   questionLabel,
 }: {
-  node: QuestionNode;
+  nodeId: string;
+  node: ThemeQuestion;
   prompt: string;
-  labelFor: (choice: Choice) => string;
-  onChoose: (choice: Choice) => void;
+  labelFor: (choice: ThemeChoice) => string;
+  onChoose: (choice: ThemeChoice) => void;
   questionLabel: string;
 }) {
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={node.id}
+        key={nodeId}
         initial={cardInitial}
         animate={cardAnimate}
         exit={cardExit}

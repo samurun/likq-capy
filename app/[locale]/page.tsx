@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { LandingHero } from "@/components/landing/landing-hero";
 import { LocaleSwitcher } from "@/components/quiz/locale-switcher";
 import { getDictionary, isLocale } from "@/lib/i18n/dictionaries";
+import { activeTheme } from "@/lib/themes/active";
+import { tt } from "@/lib/themes/i18n";
 
 export default async function LandingPage({
   params,
@@ -18,7 +20,7 @@ export default async function LandingPage({
     <main className="relative mx-auto flex min-h-svh w-full max-w-xl flex-col px-5 py-8 sm:py-12">
       <header className="flex items-center justify-between">
         <span className="font-mono text-xs tracking-wide text-muted-foreground">
-          {dict.meta.siteName}
+          {tt(activeTheme.meta.siteName, locale)}
         </span>
         <LocaleSwitcher current={locale} />
       </header>

@@ -1,19 +1,11 @@
-import { Capy } from "./capy";
+import { getMascot } from "./registry";
 import { ARCHETYPES } from "@/lib/quiz/archetypes";
 import { ACCENT_TEXT } from "@/lib/quiz/accent";
+import { activeTheme } from "@/lib/themes/active";
 import type { ArchetypeId } from "@/lib/quiz/types";
 import { cn } from "@/lib/utils";
 
-const EYES: Record<ArchetypeId, "open" | "closed" | "happy"> = {
-  "zen-master": "closed",
-  "foodie-lounger": "happy",
-  "adventure-seeker": "open",
-  "social-bather": "happy",
-  "lone-floater": "closed",
-  "hot-spring-sage": "closed",
-  sunbather: "happy",
-  "night-owl": "open",
-};
+const Mascot = getMascot(activeTheme.mascotId).Component;
 
 export function ArchetypeIllustration({
   id,
@@ -25,10 +17,15 @@ export function ArchetypeIllustration({
   title?: string;
 }) {
   const archetype = ARCHETYPES[id];
+  const expression = archetype.mascot.expression as
+    | "open"
+    | "closed"
+    | "happy"
+    | undefined;
   return (
-    <Capy
-      accessory={archetype.accessory}
-      eyes={EYES[id]}
+    <Mascot
+      variant={archetype.mascot.variant}
+      expression={expression}
       title={title}
       className={cn(className)}
       accentClassName={ACCENT_TEXT[archetype.accent]}

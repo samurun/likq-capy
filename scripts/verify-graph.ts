@@ -1,3 +1,4 @@
+import { activeTheme } from "../lib/themes/active";
 import { NODES, START } from "../lib/quiz/graph";
 import {
   ARCHETYPES,
@@ -5,16 +6,8 @@ import {
   isArchetypeId,
 } from "../lib/quiz/archetypes";
 import { archetypeFromHistory } from "../lib/quiz/score";
-import {
-  ARCHETYPE_IDS,
-  TAGS,
-  type HistoryEntry,
-  type QuestionNode,
-  type Choice,
-} from "../lib/quiz/types";
-
-import en from "../lib/i18n/en.json";
-import th from "../lib/i18n/th.json";
+import { LOCALES, type HistoryEntry } from "../lib/quiz/types";
+import type { ThemeChoice, ThemeQuestion } from "../lib/themes/types";
 
 let failed = false;
 function fail(msg: string) {
@@ -90,9 +83,9 @@ console.log("\n[2] Archetype reachability (10k random walks)");
     let cur: string | null = START;
     const history: HistoryEntry[] = [];
     while (cur !== null) {
-      const curNode: QuestionNode = NODES[cur];
+      const curNode: ThemeQuestion = NODES[cur];
       const idx = Math.floor(random() * curNode.choices.length);
-      const pick: Choice = curNode.choices[idx];
+      const pick: ThemeChoice = curNode.choices[idx];
       history.push({ nodeId: cur, choiceId: pick.id });
       cur = pick.next;
     }
@@ -101,155 +94,173 @@ console.log("\n[2] Archetype reachability (10k random walks)");
     counts[arch] = (counts[arch] ?? 0) + 1;
   }
 
-  const missing = ARCHETYPE_IDS.filter((a) => !seen.has(a));
+  const ids = Object.keys(activeTheme.archetypes);
+  const missing = ids.filter((a) => !seen.has(a));
   if (missing.length === 0) {
-    pass(`All ${ARCHETYPE_IDS.length} archetypes reachable`);
-    const distribution = ARCHETYPE_IDS.map(
-      (a) => `${a}: ${(((counts[a] ?? 0) / RUNS) * 100).toFixed(1)}%`,
-    ).join(", ");
+    pass(`All ${ids.length} archetypes reachable`);
+    const distribution = ids
+      .map((a) => `${a}: ${(((counts[a] ?? 0) / RUNS) * 100).toFixed(1)}%`)
+      .join(", ");
     console.log(`    distribution: ${distribution}`);
   } else {
     fail(`Unreachable archetypes: ${missing.join(", ")}`);
   }
 }
 
-// 3. Snapshot scoring: hand-curated walks
+// 3. Snapshot scoring: hand-curated walks (theme-specific, only run when the
+// active theme matches a known fixture).
 console.log("\n[3] Snapshot scoring");
 {
-  const fixtures: { name: string; choices: [string, string][]; expected: string }[] = [
-    {
-      name: "all-chill path",
-      choices: [
-        ["q_intro", "a"],
-        ["q_morning", "a"],
-        ["q_water", "b"],
-        ["q_food", "d"],
-        ["q_final", "c"],
-      ],
-      expected: "zen-master",
-    },
-    {
-      name: "social-first path",
-      choices: [
-        ["q_intro", "c"],
-        ["q_social", "a"],
-        ["q_companion", "b"],
-        ["q_food", "b"],
-        ["q_final", "b"],
-      ],
-      expected: "social-bather",
-    },
-    {
-      name: "nocturnal path",
-      choices: [
-        ["q_intro", "d"],
-        ["q_night", "c"],
-        ["q_water", "a"],
-        ["q_food", "c"],
-        ["q_final", "a"],
-      ],
-      expected: "night-owl",
-    },
-    {
-      name: "adventure path",
-      choices: [
-        ["q_intro", "b"],
-        ["q_adventure", "a"],
-        ["q_companion", "a"],
-        ["q_food", "a"],
-        ["q_final", "d"],
-      ],
-      expected: "adventure-seeker",
-    },
-  ];
+  const fixturesByTheme: Record<
+    string,
+    { name: string; choices: [string, string][]; expected: string }[]
+  > = {
+    "capybara-cozy": [
+      {
+        name: "all-chill path",
+        choices: [
+          ["q_intro", "a"],
+          ["q_morning", "a"],
+          ["q_water", "b"],
+          ["q_food", "d"],
+          ["q_final", "c"],
+        ],
+        expected: "zen-master",
+      },
+      {
+        name: "social-first path",
+        choices: [
+          ["q_intro", "c"],
+          ["q_social", "a"],
+          ["q_companion", "b"],
+          ["q_food", "b"],
+          ["q_final", "b"],
+        ],
+        expected: "social-bather",
+      },
+      {
+        name: "nocturnal path",
+        choices: [
+          ["q_intro", "d"],
+          ["q_night", "c"],
+          ["q_water", "a"],
+          ["q_food", "c"],
+          ["q_final", "a"],
+        ],
+        expected: "night-owl",
+      },
+      {
+        name: "adventure path",
+        choices: [
+          ["q_intro", "b"],
+          ["q_adventure", "a"],
+          ["q_companion", "a"],
+          ["q_food", "a"],
+          ["q_final", "d"],
+        ],
+        expected: "adventure-seeker",
+      },
+    ],
+  };
 
-  for (const fx of fixtures) {
-    const history: HistoryEntry[] = fx.choices.map(([nodeId, choiceId]) => ({
-      nodeId,
-      choiceId,
-    }));
-    const got = archetypeFromHistory(history);
-    if (got === fx.expected) pass(`${fx.name} -> ${got}`);
-    else fail(`${fx.name}: expected ${fx.expected}, got ${got}`);
-  }
-}
-
-// 4. i18n parity
-console.log("\n[4] i18n parity");
-{
-  function flatKeys(obj: unknown, prefix = "", out: string[] = []): string[] {
-    if (obj && typeof obj === "object" && !Array.isArray(obj)) {
-      for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
-        const path = prefix ? `${prefix}.${k}` : k;
-        if (v && typeof v === "object" && !Array.isArray(v)) {
-          flatKeys(v, path, out);
-        } else {
-          out.push(path);
-        }
-      }
-    }
-    return out;
-  }
-
-  const enKeys = flatKeys(en).sort();
-  const thKeys = flatKeys(th).sort();
-  const onlyEn = enKeys.filter((k) => !thKeys.includes(k));
-  const onlyTh = thKeys.filter((k) => !enKeys.includes(k));
-  if (onlyEn.length === 0 && onlyTh.length === 0) {
-    pass(`en.json and th.json have identical ${enKeys.length} keys`);
+  const fixtures = fixturesByTheme[activeTheme.id];
+  if (!fixtures) {
+    pass(`No fixtures for theme '${activeTheme.id}' — skipped`);
   } else {
-    if (onlyEn.length) fail(`Keys only in en: ${onlyEn.join(", ")}`);
-    if (onlyTh.length) fail(`Keys only in th: ${onlyTh.join(", ")}`);
+    for (const fx of fixtures) {
+      const history: HistoryEntry[] = fx.choices.map(([nodeId, choiceId]) => ({
+        nodeId,
+        choiceId,
+      }));
+      const got = archetypeFromHistory(history);
+      if (got === fx.expected) pass(`${fx.name} -> ${got}`);
+      else fail(`${fx.name}: expected ${fx.expected}, got ${got}`);
+    }
   }
 }
 
-// 5. Every choice's labelKey resolves in both dicts
-console.log("\n[5] Question/choice keys resolve in both locales");
+// 4. i18n parity: every theme string is present in every locale
+console.log("\n[4] Theme i18n parity");
 {
-  function get(obj: unknown, path: string): unknown {
-    let cur: unknown = obj;
-    for (const p of path.split(".")) {
-      if (!cur || typeof cur !== "object") return undefined;
-      cur = (cur as Record<string, unknown>)[p];
-    }
-    return cur;
-  }
   let ok = true;
-  for (const node of Object.values(NODES)) {
-    for (const dictName of ["en", "th"] as const) {
-      const dict = dictName === "en" ? en : th;
-      const promptKeyPath = `questions.${node.id}.prompt`;
-      if (typeof get(dict, promptKeyPath) !== "string") {
-        fail(`${dictName} missing ${promptKeyPath}`);
+  const checkPair = (label: string, value: Record<string, string>) => {
+    for (const loc of LOCALES) {
+      const v = value[loc];
+      if (typeof v !== "string" || v.length === 0) {
+        fail(`${label}: missing/empty locale '${loc}'`);
         ok = false;
       }
-      for (const choice of node.choices) {
-        const path = `questions.${node.id}.choice.${choice.id}`;
-        if (typeof get(dict, path) !== "string") {
-          fail(`${dictName} missing ${path}`);
+    }
+  };
+  const checkList = (label: string, value: Record<string, string[]>) => {
+    for (const loc of LOCALES) {
+      const v = value[loc];
+      if (!Array.isArray(v) || v.length === 0) {
+        fail(`${label}: missing/empty list locale '${loc}'`);
+        ok = false;
+      }
+    }
+  };
+
+  // meta
+  checkPair("meta.siteName", activeTheme.meta.siteName);
+  checkPair("meta.tagline", activeTheme.meta.tagline);
+  checkPair("meta.ogTitle", activeTheme.meta.ogTitle);
+  checkPair("meta.ogDescription", activeTheme.meta.ogDescription);
+
+  // questions
+  for (const [id, node] of Object.entries(activeTheme.questions)) {
+    checkPair(`question ${id}.prompt`, node.prompt);
+    for (const choice of node.choices) {
+      checkPair(`question ${id}.choice.${choice.id}.label`, choice.label);
+    }
+  }
+
+  // archetypes
+  for (const [id, arch] of Object.entries(activeTheme.archetypes)) {
+    checkPair(`archetype ${id}.name`, arch.name);
+    checkPair(`archetype ${id}.description`, arch.description);
+    checkList(`archetype ${id}.traits`, arch.traits);
+  }
+
+  if (ok)
+    pass(
+      `All theme strings (meta + ${Object.keys(activeTheme.questions).length} questions + ${Object.keys(activeTheme.archetypes).length} archetypes) present in all ${LOCALES.length} locales`,
+    );
+}
+
+// 5. Tag wiring: every choice tag and every archetype profile tag must be
+// declared in theme.tags
+console.log("\n[5] Tag wiring");
+{
+  let ok = true;
+  const declared = new Set(activeTheme.tags);
+  for (const [id, node] of Object.entries(activeTheme.questions)) {
+    for (const choice of node.choices) {
+      for (const tag of Object.keys(choice.tags)) {
+        if (!declared.has(tag)) {
+          fail(`question ${id}/${choice.id} uses undeclared tag '${tag}'`);
           ok = false;
         }
       }
     }
   }
-  for (const a of ARCHETYPE_LIST) {
-    for (const dictName of ["en", "th"] as const) {
-      const dict = dictName === "en" ? en : th;
-      const arch = (dict as { archetypes: Record<string, unknown> }).archetypes?.[a.id];
-      if (!arch) {
-        fail(`${dictName} missing archetype ${a.id}`);
+  for (const [id, arch] of Object.entries(activeTheme.archetypes)) {
+    for (const tag of Object.keys(arch.profile)) {
+      if (!declared.has(tag)) {
+        fail(`archetype ${id} profile uses undeclared tag '${tag}'`);
         ok = false;
       }
     }
   }
-  if (ok) pass("All question/choice/archetype keys resolve");
+  if (ok) pass(`All tags used resolve in theme.tags (${activeTheme.tags.length} declared)`);
 }
 
 // 6. Sanity
 console.log("\n[6] Sanity");
-if (TAGS.length > 0) pass(`${TAGS.length} tags defined`);
-if (ARCHETYPES["zen-master"]) pass("Zen Master exists");
-if (isArchetypeId("zen-master")) pass("isArchetypeId works");
+if (activeTheme.tags.length > 0) pass(`${activeTheme.tags.length} tags defined`);
+if (ARCHETYPES[ARCHETYPE_LIST[0].id]) pass(`first archetype '${ARCHETYPE_LIST[0].id}' resolves`);
+if (isArchetypeId(ARCHETYPE_LIST[0].id)) pass("isArchetypeId works");
 
 console.log("");
 if (failed) {

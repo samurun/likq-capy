@@ -7,7 +7,7 @@ import { motion } from "motion/react";
 import { QuestionCard } from "./question-card";
 import { ProgressBar } from "./progress-bar";
 import { Button } from "@/components/ui/button";
-import { Capy } from "@/components/mascots/capy";
+import { getMascot } from "@/components/mascots/registry";
 import { ESTIMATED_DEPTH, getNode } from "@/lib/quiz/graph";
 import {
   applyChoice,
@@ -16,9 +16,15 @@ import {
 } from "@/lib/quiz/score";
 import { addResult } from "@/lib/quiz/history";
 import { isTerminalNode, useQuizStore } from "@/lib/quiz/store";
-import { ARCHETYPE_IDS, type Choice, type Locale } from "@/lib/quiz/types";
+import { ARCHETYPE_IDS } from "@/lib/quiz/archetypes";
+import type { Locale } from "@/lib/quiz/types";
+import { activeTheme } from "@/lib/themes/active";
+import { tt } from "@/lib/themes/i18n";
+import type { ThemeChoice } from "@/lib/themes/types";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
-import { format, lookup } from "@/lib/i18n/lookup";
+import { format } from "@/lib/i18n/lookup";
+
+const Mascot = getMascot(activeTheme.mascotId).Component;
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const preparingInitial = { opacity: 0 };
@@ -81,10 +87,10 @@ export function QuizRunner({
   const node = getNode(currentNodeId);
   const step = history.length + 1;
   const total = ESTIMATED_DEPTH;
-  const prompt = lookup(dict, node.promptKey);
-  const labelFor = (choice: Choice) => lookup(dict, choice.labelKey);
+  const prompt = tt(node.prompt, locale);
+  const labelFor = (choice: ThemeChoice) => tt(choice.label, locale);
 
-  const handleChoose = (choice: Choice) => {
+  const handleChoose = (choice: ThemeChoice) => {
     // For the terminal choice, short-circuit: compute the archetype, persist
     // the run and navigate without ever transitioning the store into the
     // TERMINAL state. We deliberately do not call reset() here — that would
@@ -120,6 +126,7 @@ export function QuizRunner({
       />
 
       <QuestionCard
+        nodeId={currentNodeId}
         node={node}
         prompt={prompt}
         labelFor={labelFor}
@@ -162,7 +169,7 @@ function PreparingState({ label }: { label: string }) {
         transition={preparingMascotTransition}
         className="w-40"
       >
-        <Capy accessory="leaf" eyes="happy" accentClassName="text-chart-2" />
+        <Mascot variant="leaf" expression="happy" accentClassName="text-chart-2" />
       </motion.div>
       <span className="text-sm text-muted-foreground">{label}</span>
     </motion.div>

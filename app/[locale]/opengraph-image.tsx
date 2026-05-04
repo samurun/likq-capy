@@ -1,8 +1,10 @@
 import { ImageResponse } from "next/og"
 
-import { getDictionary, isLocale } from "@/lib/i18n/dictionaries"
+import { isLocale } from "@/lib/i18n/dictionaries"
 import { LOCALES } from "@/lib/quiz/types"
-import { OgCapy } from "@/lib/og/capy"
+import { activeTheme } from "@/lib/themes/active"
+import { tt } from "@/lib/themes/i18n"
+import { getOgMascot } from "@/lib/og/mascots/registry"
 import { THEME, loadDisplayFont } from "@/lib/og/palette"
 
 export const size = { width: 1200, height: 630 }
@@ -24,9 +26,12 @@ export default async function HomeOgImage({
 }) {
   const { locale: rawLocale } = await params
   const locale = isLocale(rawLocale) ? rawLocale : "th"
-  const dict = getDictionary(locale)
   const fontData = await loadDisplayFont()
   const cta = CTA_BY_LOCALE[locale] ?? CTA_BY_LOCALE.en
+  const Mascot = getOgMascot(activeTheme.mascotId)
+  const siteName = tt(activeTheme.meta.siteName, locale)
+  const ogTitle = tt(activeTheme.meta.ogTitle, locale)
+  const tagline = tt(activeTheme.meta.tagline, locale)
 
   return new ImageResponse(
     (
@@ -50,9 +55,9 @@ export default async function HomeOgImage({
             justifyContent: "center",
           }}
         >
-          <OgCapy
-            accessory="leaf"
-            eyes="happy"
+          <Mascot
+            variant="leaf"
+            expression="happy"
             accentColor="#3b8a4d"
             width={460}
           />
@@ -88,7 +93,7 @@ export default async function HomeOgImage({
                 marginRight: 12,
               }}
             />
-            {dict.meta.siteName}
+            {siteName}
           </div>
 
           {/* Title */}
@@ -105,7 +110,7 @@ export default async function HomeOgImage({
               overflowWrap: "anywhere",
             }}
           >
-            {dict.meta.ogTitle}
+            {ogTitle}
           </div>
 
           {/* Tagline */}
@@ -118,7 +123,7 @@ export default async function HomeOgImage({
               maxWidth: 560,
             }}
           >
-            {dict.meta.tagline}
+            {tagline}
           </div>
 
           {/* CTA */}

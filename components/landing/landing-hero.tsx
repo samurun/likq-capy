@@ -4,9 +4,13 @@ import Link from "next/link";
 import { motion } from "motion/react";
 
 import { Button } from "@/components/ui/button";
-import { Capy } from "@/components/mascots/capy";
+import { getMascot } from "@/components/mascots/registry";
 import type { Locale } from "@/lib/quiz/types";
+import { activeTheme } from "@/lib/themes/active";
+import { tt } from "@/lib/themes/i18n";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+
+const Mascot = getMascot(activeTheme.mascotId).Component;
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -54,11 +58,11 @@ export function LandingHero({
         variants={mascotVariants}
         transition={mascotTransition}
       >
-        <Capy
-          accessory="leaf"
-          eyes="happy"
+        <Mascot
+          variant="leaf"
+          expression="happy"
           accentClassName="text-chart-2"
-          title={dict.meta.siteName}
+          title={tt(activeTheme.meta.siteName, locale)}
         />
       </motion.div>
 
@@ -68,10 +72,10 @@ export function LandingHero({
         transition={titleTransition}
       >
         <h1 className="text-balance text-3xl leading-tight font-medium sm:text-4xl">
-          {dict.meta.ogTitle}
+          {tt(activeTheme.meta.ogTitle, locale)}
         </h1>
         <p className="text-pretty text-foreground/70 sm:text-base">
-          {dict.meta.tagline}
+          {tt(activeTheme.meta.tagline, locale)}
         </p>
       </motion.div>
 

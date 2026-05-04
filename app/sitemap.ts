@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
-import { ARCHETYPE_IDS, LOCALES } from "@/lib/quiz/types";
+import { ARCHETYPE_IDS } from "@/lib/quiz/archetypes";
+import { LOCALES } from "@/lib/quiz/types";
 import { SITE_URL, canonicalUrl, languageAlternates } from "@/lib/site";
 
 const ROUTES = ["", "quiz", "history"] as const;

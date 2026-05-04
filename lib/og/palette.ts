@@ -1,6 +1,6 @@
-import type { Archetype } from "@/lib/quiz/types"
+import type { AccentToken } from "@/lib/themes/types"
 
-export const ACCENT_COLORS: Record<Archetype["accent"], [string, string]> = {
+export const ACCENT_COLORS: Record<AccentToken, [string, string]> = {
   "chart-1": ["#f7d985", "#dd9a3c"],
   "chart-2": ["#8fd09a", "#3b8a4d"],
   "chart-3": ["#f3b07b", "#cc7338"],
@@ -9,7 +9,7 @@ export const ACCENT_COLORS: Record<Archetype["accent"], [string, string]> = {
 }
 
 // Soft tinted backgrounds matching the result page accent halo on the web
-export const ACCENT_BG_TINT: Record<Archetype["accent"], string> = {
+export const ACCENT_BG_TINT: Record<AccentToken, string> = {
   "chart-1": "#fff6e0",
   "chart-2": "#e6f4ea",
   "chart-3": "#fdeedf",

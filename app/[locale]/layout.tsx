@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-import { getDictionary, isLocale } from "@/lib/i18n/dictionaries";
+import { isLocale } from "@/lib/i18n/dictionaries";
 import { LOCALES } from "@/lib/quiz/types";
+import { activeTheme } from "@/lib/themes/active";
+import { tt } from "@/lib/themes/i18n";
 import {
   OG_LOCALE,
   canonicalUrl,
@@ -20,27 +22,29 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
-  const dict = getDictionary(locale);
+  const ogTitle = tt(activeTheme.meta.ogTitle, locale);
+  const ogDescription = tt(activeTheme.meta.ogDescription, locale);
+  const siteName = tt(activeTheme.meta.siteName, locale);
   const url = canonicalUrl(locale);
   return {
-    title: { absolute: dict.meta.ogTitle },
-    description: dict.meta.ogDescription,
+    title: { absolute: ogTitle },
+    description: ogDescription,
     alternates: {
       canonical: url,
       languages: languageAlternates(""),
     },
     openGraph: {
-      title: dict.meta.ogTitle,
-      description: dict.meta.ogDescription,
-      siteName: dict.meta.siteName,
+      title: ogTitle,
+      description: ogDescription,
+      siteName,
       url,
       type: "website",
       locale: OG_LOCALE[locale],
     },
     twitter: {
       card: "summary_large_image",
-      title: dict.meta.ogTitle,
-      description: dict.meta.ogDescription,
+      title: ogTitle,
+      description: ogDescription,
     },
   };
 }
@@ -54,16 +58,17 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  const dict = getDictionary(locale);
+  const siteName = tt(activeTheme.meta.siteName, locale);
+  const ogDescription = tt(activeTheme.meta.ogDescription, locale);
 
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: dict.meta.siteName,
+    name: siteName,
     url: canonicalUrl(locale),
     inLanguage: locale,
-    description: dict.meta.ogDescription,
-    publisher: { "@type": "Organization", name: dict.meta.siteName },
+    description: ogDescription,
+    publisher: { "@type": "Organization", name: siteName },
   };
 
   return (

@@ -1,26 +1,15 @@
-/* eslint-disable react/no-unknown-property */
-import type { Archetype } from "@/lib/quiz/types"
-import { THEME } from "./palette"
-
-type Accessory = Archetype["accessory"]
-type Eyes = "open" | "closed" | "happy"
-
-type Props = {
-  accessory?: Accessory
-  eyes?: Eyes
-  accentColor?: string
-  width: number
-}
+import { THEME } from "../palette"
+import type { OgMascotProps } from "./registry"
 
 // Mirror of components/mascots/capy.tsx with hardcoded palette so it
 // renders inside Satori (which doesn't process Tailwind/CSS variables).
 // Keep visually in sync with the web Capy when paths change.
 export function OgCapy({
-  accessory = "none",
-  eyes = "open",
+  variant: accessory = "none",
+  expression: eyes = "open",
   accentColor = THEME.capy,
   width,
-}: Props) {
+}: OgMascotProps) {
   const height = (width / 240) * 200
   return (
     <svg

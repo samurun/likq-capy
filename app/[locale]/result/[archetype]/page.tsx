@@ -4,8 +4,10 @@ import type { Metadata } from "next";
 
 import { ResultCard } from "@/components/result/result-card";
 import { LocaleSwitcher } from "@/components/quiz/locale-switcher";
-import { ARCHETYPE_IDS, LOCALES } from "@/lib/quiz/types";
-import { isArchetypeId } from "@/lib/quiz/archetypes";
+import { ARCHETYPE_IDS, isArchetypeId } from "@/lib/quiz/archetypes";
+import { LOCALES } from "@/lib/quiz/types";
+import { activeTheme } from "@/lib/themes/active";
+import { tt, ttl } from "@/lib/themes/i18n";
 import { getDictionary, isLocale } from "@/lib/i18n/dictionaries";
 import { format } from "@/lib/i18n/lookup";
 import { OG_LOCALE, canonicalUrl, languageAlternates } from "@/lib/site";
@@ -24,30 +26,31 @@ export async function generateMetadata({
   const { locale, archetype } = await params;
   if (!isLocale(locale) || !isArchetypeId(archetype)) return {};
   const dict = getDictionary(locale);
-  const meta = dict.archetypes[archetype];
-  const title = meta.name;
-  const description = format(dict.ui.shareText, { archetype: meta.name });
+  const archDef = activeTheme.archetypes[archetype];
+  const name = tt(archDef.name, locale);
+  const siteName = tt(activeTheme.meta.siteName, locale);
+  const description = format(dict.ui.shareText, { archetype: name });
   const suffix = `result/${archetype}`;
   const url = canonicalUrl(locale, suffix);
 
   return {
-    title,
+    title: name,
     description,
     alternates: {
       canonical: url,
       languages: languageAlternates(suffix),
     },
     openGraph: {
-      title: `${meta.name} · ${dict.meta.siteName}`,
+      title: `${name} · ${siteName}`,
       description,
-      siteName: dict.meta.siteName,
+      siteName,
       url,
       type: "article",
       locale: OG_LOCALE[locale],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${meta.name} · ${dict.meta.siteName}`,
+      title: `${name} · ${siteName}`,
       description,
     },
   };
@@ -61,23 +64,27 @@ export default async function ResultPage({
   const { locale, archetype } = await params;
   if (!isLocale(locale) || !isArchetypeId(archetype)) notFound();
   const dict = getDictionary(locale);
-  const meta = dict.archetypes[archetype];
+  const archDef = activeTheme.archetypes[archetype];
+  const name = tt(archDef.name, locale);
+  const description = tt(archDef.description, locale);
+  const traits = ttl(archDef.traits, locale);
+  const siteName = tt(activeTheme.meta.siteName, locale);
   const url = canonicalUrl(locale, `result/${archetype}`);
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
-    name: meta.name,
-    headline: meta.name,
-    description: meta.description,
+    name,
+    headline: name,
+    description,
     inLanguage: locale,
     url,
     isPartOf: {
       "@type": "Quiz",
-      name: dict.meta.siteName,
+      name: siteName,
       url: canonicalUrl(locale),
     },
-    keywords: meta.traits.join(", "),
+    keywords: traits.join(", "),
   };
 
   return (
@@ -92,7 +99,7 @@ export default async function ResultPage({
           href={`/${locale}`}
           className="font-mono text-xs tracking-wide text-muted-foreground hover:text-foreground"
         >
-          ← {dict.meta.siteName}
+          ← {siteName}
         </Link>
         <LocaleSwitcher current={locale} />
       </header>

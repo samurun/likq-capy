@@ -1,9 +1,11 @@
 import { ImageResponse } from "next/og"
 
-import { getDictionary, isLocale } from "@/lib/i18n/dictionaries"
-import { ARCHETYPES, isArchetypeId } from "@/lib/quiz/archetypes"
-import { ARCHETYPE_IDS, LOCALES, type ArchetypeId } from "@/lib/quiz/types"
-import { OgCapy } from "@/lib/og/capy"
+import { isLocale } from "@/lib/i18n/dictionaries"
+import { ARCHETYPE_IDS, isArchetypeId } from "@/lib/quiz/archetypes"
+import { LOCALES } from "@/lib/quiz/types"
+import { activeTheme } from "@/lib/themes/active"
+import { tt, ttl } from "@/lib/themes/i18n"
+import { getOgMascot } from "@/lib/og/mascots/registry"
 import {
   ACCENT_BG_TINT,
   ACCENT_COLORS,
@@ -30,17 +32,6 @@ const LEAD_BY_LOCALE: Record<string, string> = {
   th: "คุณคือ",
 }
 
-const EYES_BY_ARCHETYPE: Record<ArchetypeId, "open" | "closed" | "happy"> = {
-  "zen-master": "closed",
-  "foodie-lounger": "happy",
-  "adventure-seeker": "open",
-  "social-bather": "happy",
-  "lone-floater": "closed",
-  "hot-spring-sage": "closed",
-  sunbather: "happy",
-  "night-owl": "open",
-}
-
 export default async function ResultOgImage({
   params,
 }: {
@@ -51,14 +42,21 @@ export default async function ResultOgImage({
   if (!isArchetypeId(rawArchetype)) {
     return new Response("Not found", { status: 404 })
   }
-  const dict = getDictionary(locale)
-  const meta = dict.archetypes[rawArchetype]
-  const archetype = ARCHETYPES[rawArchetype]
-  const [, accent] = ACCENT_COLORS[archetype.accent]
-  const tint = ACCENT_BG_TINT[archetype.accent]
+  const archDef = activeTheme.archetypes[rawArchetype]
+  const [, accent] = ACCENT_COLORS[archDef.accent]
+  const tint = ACCENT_BG_TINT[archDef.accent]
   const fontData = await loadDisplayFont()
   const cta = CTA_BY_LOCALE[locale] ?? CTA_BY_LOCALE.en
   const lead = LEAD_BY_LOCALE[locale] ?? LEAD_BY_LOCALE.en
+  const Mascot = getOgMascot(activeTheme.mascotId)
+  const siteName = tt(activeTheme.meta.siteName, locale)
+  const name = tt(archDef.name, locale)
+  const traits = ttl(archDef.traits, locale)
+  const expression = archDef.mascot.expression as
+    | "open"
+    | "closed"
+    | "happy"
+    | undefined
 
   return new ImageResponse(
     (
@@ -108,7 +106,7 @@ export default async function ResultOgImage({
                 marginRight: 12,
               }}
             />
-            {dict.meta.siteName}
+            {siteName}
           </div>
 
           {/* Mascot — left half */}
@@ -121,9 +119,9 @@ export default async function ResultOgImage({
               marginTop: 32,
             }}
           >
-            <OgCapy
-              accessory={archetype.accessory}
-              eyes={EYES_BY_ARCHETYPE[rawArchetype]}
+            <Mascot
+              variant={archDef.mascot.variant}
+              expression={expression}
               accentColor={accent}
               width={420}
             />
@@ -164,7 +162,7 @@ export default async function ResultOgImage({
                 overflowWrap: "anywhere",
               }}
             >
-              {meta.name}
+              {name}
             </div>
 
             <div
@@ -176,7 +174,7 @@ export default async function ResultOgImage({
                 alignItems: "flex-start",
               }}
             >
-              {meta.traits.slice(0, 2).map((trait) => (
+              {traits.slice(0, 2).map((trait) => (
                 <div
                   key={trait}
                   style={{

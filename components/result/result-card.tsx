@@ -11,6 +11,8 @@ import { ARCHETYPES } from "@/lib/quiz/archetypes"
 import { ACCENT_BG, ACCENT_TEXT } from "@/lib/quiz/accent"
 import { useQuizStore } from "@/lib/quiz/store"
 import type { ArchetypeId, Locale } from "@/lib/quiz/types"
+import { activeTheme } from "@/lib/themes/active"
+import { tt, ttl } from "@/lib/themes/i18n"
 import type { Dictionary } from "@/lib/i18n/dictionaries"
 import { format } from "@/lib/i18n/lookup"
 import { cn } from "@/lib/utils"
@@ -75,7 +77,11 @@ export function ResultCard({
   dict: Dictionary
 }) {
   const archetype = ARCHETYPES[archetypeId]
-  const meta = dict.archetypes[archetypeId]
+  const meta = {
+    name: tt(activeTheme.archetypes[archetypeId].name, locale),
+    description: tt(activeTheme.archetypes[archetypeId].description, locale),
+    traits: ttl(activeTheme.archetypes[archetypeId].traits, locale),
+  }
 
   // Reset the quiz store on mount so that returning to /quiz starts fresh.
   // Done here (not in QuizRunner on terminal choice) to avoid a Q1 flash
@@ -183,7 +189,7 @@ export function ResultCard({
         transition={footerTransition}
       >
         <ShareButtons
-          shareTitle={dict.meta.ogTitle}
+          shareTitle={tt(activeTheme.meta.ogTitle, locale)}
           shareText={format(dict.ui.shareText, { archetype: meta.name })}
           shareLabel={dict.ui.share}
           copyLabel={dict.ui.copy}
@@ -193,7 +199,7 @@ export function ResultCard({
           archetypeName={meta.name}
           archetypeDescription={meta.description}
           accent={archetype.accent}
-          siteName={dict.meta.siteName}
+          siteName={tt(activeTheme.meta.siteName, locale)}
           storyTopLabel={dict.ui.yourArchetype}
           storyBottomLabel={dict.ui.storyCta}
         />

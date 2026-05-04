@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { QuizRunner } from "@/components/quiz/quiz-runner";
 import { LocaleSwitcher } from "@/components/quiz/locale-switcher";
 import { getDictionary, isLocale } from "@/lib/i18n/dictionaries";
+import { activeTheme } from "@/lib/themes/active";
+import { tt } from "@/lib/themes/i18n";
 
 export default async function QuizPage({
   params,
@@ -21,7 +23,7 @@ export default async function QuizPage({
           href={`/${locale}`}
           className="font-mono text-xs tracking-wide text-muted-foreground hover:text-foreground"
         >
-          ← {dict.meta.siteName}
+          ← {tt(activeTheme.meta.siteName, locale)}
         </Link>
         <LocaleSwitcher current={locale} />
       </header>
