@@ -2,7 +2,8 @@ import { ImageResponse } from "next/og"
 
 import { getDictionary, isLocale } from "@/lib/i18n/dictionaries"
 import { LOCALES } from "@/lib/quiz/types"
-import { ACCENT_COLORS, loadDisplayFont } from "@/lib/og/palette"
+import { OgCapy } from "@/lib/og/capy"
+import { THEME, loadDisplayFont } from "@/lib/og/palette"
 
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
@@ -12,7 +13,7 @@ export function generateStaticParams() {
 }
 
 const CTA_BY_LOCALE: Record<string, string> = {
-  en: "Take the quiz →",
+  en: "Start the quiz →",
   th: "เริ่มทำควิซ →",
 }
 
@@ -24,7 +25,6 @@ export default async function HomeOgImage({
   const { locale: rawLocale } = await params
   const locale = isLocale(rawLocale) ? rawLocale : "en"
   const dict = getDictionary(locale)
-  const [c1, c2] = ACCENT_COLORS["chart-2"]
   const fontData = await loadDisplayFont()
   const cta = CTA_BY_LOCALE[locale] ?? CTA_BY_LOCALE.en
 
@@ -35,73 +35,99 @@ export default async function HomeOgImage({
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
-          padding: 72,
-          background: `linear-gradient(135deg, ${c1} 0%, ${c2} 100%)`,
-          color: "#fffaf2",
+          background: THEME.background,
+          color: THEME.foreground,
           fontFamily: "Capy, system-ui, sans-serif",
-          position: "relative",
+          padding: "56px 72px",
         }}
       >
+        {/* Left mascot column */}
         <div
           style={{
+            width: 520,
             display: "flex",
             alignItems: "center",
-            fontSize: 30,
-            opacity: 0.92,
-            letterSpacing: 1,
+            justifyContent: "center",
           }}
         >
-          <div
-            style={{
-              width: 18,
-              height: 18,
-              borderRadius: 999,
-              background: "#fffaf2",
-              marginRight: 14,
-            }}
+          <OgCapy
+            accessory="leaf"
+            eyes="happy"
+            accentColor="#3b8a4d"
+            width={460}
           />
-          {dict.meta.siteName}
         </div>
 
+        {/* Right content column */}
         <div
           style={{
-            marginTop: "auto",
+            flex: 1,
             display: "flex",
             flexDirection: "column",
+            paddingLeft: 24,
           }}
         >
+          {/* Brand mark */}
           <div
             style={{
-              fontSize: 72,
-              lineHeight: 1.08,
-              fontWeight: 700,
-              letterSpacing: -1,
-              maxWidth: 1020,
-              textShadow: "0 4px 24px rgba(20,40,30,0.18)",
+              display: "flex",
+              alignItems: "center",
+              fontSize: 22,
+              color: THEME.mutedForeground,
+              letterSpacing: 1.6,
+              textTransform: "uppercase",
+              fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+            }}
+          >
+            <div
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: 999,
+                background: "#3b8a4d",
+                marginRight: 12,
+              }}
+            />
+            {dict.meta.siteName}
+          </div>
+
+          {/* Title */}
+          <div
+            style={{
+              marginTop: 28,
+              fontSize: locale === "th" ? 52 : 60,
+              lineHeight: 1.12,
+              fontWeight: 500,
+              letterSpacing: -0.5,
+              color: THEME.foreground,
+              maxWidth: 580,
+              wordBreak: "break-word",
+              overflowWrap: "anywhere",
             }}
           >
             {dict.meta.ogTitle}
           </div>
 
+          {/* Tagline */}
           <div
             style={{
-              marginTop: 24,
-              fontSize: 28,
-              opacity: 0.92,
-              maxWidth: 940,
-              lineHeight: 1.35,
+              marginTop: 22,
+              fontSize: 26,
+              lineHeight: 1.4,
+              color: "rgba(37,37,37,0.7)",
+              maxWidth: 560,
             }}
           >
             {dict.meta.tagline}
           </div>
 
+          {/* CTA */}
           <div
             style={{
-              marginTop: 44,
+              marginTop: "auto",
               display: "flex",
               alignItems: "center",
-              gap: 20,
+              gap: 22,
             }}
           >
             <div
@@ -109,16 +135,22 @@ export default async function HomeOgImage({
                 display: "flex",
                 alignItems: "center",
                 padding: "18px 32px",
-                background: "#fffaf2",
-                color: "#2d2418",
+                background: "#1a1a1a",
+                color: "#fdfaf4",
                 borderRadius: 999,
-                fontSize: 30,
-                fontWeight: 600,
+                fontSize: 26,
+                fontWeight: 500,
               }}
             >
               {cta}
             </div>
-            <div style={{ fontSize: 26, opacity: 0.85, marginLeft: 8 }}>
+            <div
+              style={{
+                fontSize: 20,
+                color: THEME.mutedForeground,
+                fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+              }}
+            >
               capybaraquiz.app
             </div>
           </div>

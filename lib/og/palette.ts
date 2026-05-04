@@ -8,6 +8,26 @@ export const ACCENT_COLORS: Record<Archetype["accent"], [string, string]> = {
   "chart-5": ["#9088c2", "#3a2f6b"],
 }
 
+// Soft tinted backgrounds matching the result page accent halo on the web
+export const ACCENT_BG_TINT: Record<Archetype["accent"], string> = {
+  "chart-1": "#fff6e0",
+  "chart-2": "#e6f4ea",
+  "chart-3": "#fdeedf",
+  "chart-4": "#fbe1da",
+  "chart-5": "#ebe9f4",
+}
+
+// Approximations of the design tokens from app/globals.css :root
+export const THEME = {
+  background: "#fdfaf4",
+  foreground: "#252525",
+  mutedForeground: "#8e8e8e",
+  border: "#ebe5dc",
+  capy: "#a08770",
+  capyShadow: "#75603e",
+  capyWater: "#cfe1ec",
+}
+
 let fontCache: ArrayBuffer | null = null
 
 export async function loadDisplayFont(): Promise<ArrayBuffer | null> {
